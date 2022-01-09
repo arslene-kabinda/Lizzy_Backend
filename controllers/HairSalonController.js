@@ -67,3 +67,26 @@ exports.getHairSalon = async (req, res) => {
     });
   }
 };
+exports.updateHairSalon = async (req, res) => {
+  try {
+    const hairSalon = await HairSalon.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res.status(200).json({
+      status: "success",
+      data: {
+        hairSalon,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err,
+    });
+  }
+};

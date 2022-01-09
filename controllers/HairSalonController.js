@@ -90,3 +90,20 @@ exports.updateHairSalon = async (req, res) => {
     });
   }
 };
+
+exports.deleteHairSalon = async (req, res) => {
+  try {
+    const hairSalon = await HairSalon.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      status: "hairSalon deleted successfully",
+      data: {
+        hairSalon,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: "failed",
+      message: "invalid data sent!",
+    });
+  }
+};

@@ -1,22 +1,14 @@
-const HairSalon = require("../models/HairSalonModel");
-
+const BeautySalon = require("../models/BeautySalon");
 const APIFeatures = require("../utils/apiFeatures");
 
-exports.aliasTopHairSalons = (req, res, next) => {
-  req.query.limit = "4";
-  req.query.sort = "createdAt";
-  req.query.fields = "name,ratingsAverage";
-  next();
-};
-
-exports.createHairSalon = async (req, res) => {
+exports.createBeautySalon = async (req, res) => {
   try {
     const Body = req.body;
-    const newHairSalon = await HairSalon.create(Body);
+    const newBeautySalon = await BeautySalon.create(Body);
     res.status(201).json({
       status: "the creation of the hairsalon is done with success",
       data: {
-        newHairSalon,
+        newBeautySalon,
       },
     });
   } catch (err) {
@@ -27,21 +19,21 @@ exports.createHairSalon = async (req, res) => {
   }
 };
 
-exports.getAllHairSalon = async (req, res) => {
+exports.getAllBeautySalon = async (req, res) => {
   try {
-    const features = new APIFeatures(HairSalon.find(), req.query)
+    const features = new APIFeatures(BeautySalon.find(), req.query)
       .filter()
       .sort()
       .limitFields()
       .paginate();
-    const hairSalons = await features.query;
-    // const hairSalons = await HairSalon.find();
+    const beautySalons = await features.query;
+    // const beautySalons = await BeautySalon.find();
     //SEND RESPONSE
     res.status(200).json({
       status: "success",
-      results: hairSalons.length,
+      results: beautySalons.length,
       data: {
-        hairSalons,
+        beautySalons,
       },
     });
   } catch (err) {
@@ -52,36 +44,13 @@ exports.getAllHairSalon = async (req, res) => {
   }
 };
 
-exports.getHairSalon = async (req, res) => {
+exports.getBeautySalon = async (req, res) => {
   try {
-    const hairSalon = await HairSalon.findById(req.params.id);
+    const beautySalon = await BeautySalon.findById(req.params.id);
     res.status(200).json({
       status: "success",
       data: {
-        hairSalon,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: "failed",
-      message: err,
-    });
-  }
-};
-exports.updateHairSalon = async (req, res) => {
-  try {
-    const hairSalon = await HairSalon.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-    res.status(200).json({
-      status: "success",
-      data: {
-        hairSalon,
+        beautySalon,
       },
     });
   } catch (err) {
@@ -92,13 +61,36 @@ exports.updateHairSalon = async (req, res) => {
   }
 };
 
-exports.deleteHairSalon = async (req, res) => {
+exports.updateBeautySalon = async (req, res) => {
   try {
-    const hairSalon = await HairSalon.findByIdAndDelete(req.params.id);
+    const beautySalon = await BeautySalon.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res.status(200).json({
+      status: "success",
+      data: {
+        beautySalon,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err,
+    });
+  }
+};
+exports.deleteBeautySalon = async (req, res) => {
+  try {
+    const beautySalon = await BeautySalon.findByIdAndDelete(req.params.id);
     res.status(200).json({
       status: "hairSalon deleted successfully",
       data: {
-        hairSalon,
+        beautySalon,
       },
     });
   } catch (err) {

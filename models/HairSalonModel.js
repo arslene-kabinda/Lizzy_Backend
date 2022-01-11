@@ -12,7 +12,7 @@ const hairSalonSchema = new mongoose.Schema({
   },
   coverImage: {
     type: String,
-    required: [true, "an hairSalon must have a cover picture"],
+    // required: [true, "an hairSalon must have a cover picture"],
   },
   adress: {
     type: [
@@ -27,11 +27,11 @@ const hairSalonSchema = new mongoose.Schema({
   },
   openingTime: {
     type: Date,
-    required: [true, "give the opening hour"],
+    // required: [true, "give the opening hour"],
   },
   closingTime: {
     type: Date,
-    required: [true, "give the closing hour"],
+    // required: [true, "give the closing hour"],
   },
   map: {
     type: String,
@@ -42,6 +42,10 @@ const hairSalonSchema = new mongoose.Schema({
   ratingsAverage: {
     type: Number,
     default: 2,
+  },
+  CreatedAt: {
+    type: Date,
+    default: Date.now(),
   },
 });
 

@@ -22,11 +22,16 @@
     "prettier": "^2.5.1"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "crypto-js": "^4.1.1",
     "dotenv": "^10.0.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "express": "^4.17.2",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.5",
     "morgan": "^1.10.0",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.3.0",
     "validator": "^13.7.0"
   }
 }

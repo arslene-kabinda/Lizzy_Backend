@@ -86,12 +86,10 @@ exports.updateBeautySalon = async (req, res) => {
 };
 exports.deleteBeautySalon = async (req, res) => {
   try {
-    const beautySalon = await BeautySalon.findByIdAndDelete(req.params.id);
+    await BeautySalon.findByIdAndDelete(req.params.id);
     res.status(200).json({
       status: "hairSalon deleted successfully",
-      data: {
-        beautySalon,
-      },
+      data: null,
     });
   } catch (err) {
     res.status(404).json({

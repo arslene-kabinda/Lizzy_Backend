@@ -1,9 +1,10 @@
+const crypto = require("crypto");
+
 const mongoose = require("mongoose");
 
 const validator = require("validator");
-const bcrypt = require("bcryptjs");
 
-const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
   lastName: {
@@ -13,54 +14,54 @@ const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
     required: [true, "an account must have a firstName"],
-    unique: true,
   },
   email: {
     type: String,
-    required: [true, "please provide a mail "],
+    required: [true, "please provide your email "],
     unique: true,
     lowercase: true,
     validate: [validator.isEmail, "please provide a valid mail"],
   },
-  // phone: {
-  //   type: String,
-  //   unique: true,
-  //   // required: [true, "An account has to have a phone number"],
-  //   validate: [validator.isMobilePhone, "please provide a good phone number"],
-  // },
+  phone: {
+    type: String,
+    unique: true,
+    // required: [true, "An account has to have a phone number"],
+    validate: [validator.isMobilePhone, "please provide a good phone number"],
+  },
   role: {
     type: String,
+    enum: ["user", "admin", "hair_salon_owner", "beauty_salon_owner"],
     default: "user",
-    enum: ["client", "admin", "user"],
   },
   password: {
     type: String,
     required: [true, "an account must have a password"],
-    minlength: [10, "a minimum of 10 characters"],
+    minlength: [8, "a minimum of 10 characters"],
     select: false,
   },
-  //   DateOfBirth: {
-  //     type: Date,
-  //   },
+
   passwordConfirm: {
     type: String,
-    required: [true, "must confirm the password when signup"],
-    minlength: [10, "a minimum of 10 characters"],
+    required: [true, "please confirm "],
     select: false,
     validate: {
+      //this only work on create and  save
       validator: function (el) {
         return el === this.password;
       },
       message: "password are not the same",
     },
   },
-  photo: {
+  avatar: {
     type: String,
     // required: [false, "optional"],
   },
+  cloudinary_id: {
+    type: String,
+  },
   passwordChangedAt: Date,
-  // passwordResetToken: String,
-  // passwordResetExpires: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   // restaurant: { type: mongoose.Schema.Types.ObjectId, ref: "Restaurant" },
 });
 userSchema.pre("save", async function (next) {
@@ -74,6 +75,7 @@ userSchema.pre("save", async function (next) {
 userSchema.pre("save", function (next) {
   if (!this.isModified("password") || this.isNew) return next();
   this.passwordChangedAt = Date.now() - 1000;
+  next();
 });
 userSchema.methods.correctPassword = async function (
   candidatePassword,
@@ -85,23 +87,24 @@ userSchema.methods.chagedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
-      10
+      30
     );
     console.log(changedTimestamp, JWTTimestamp);
     return JWTTimestamp < changedTimestamp;
   }
   return false;
 };
-// userSchema.methods.createPasswordResetToken = function () {
-//   const resetToken = crypto.randomBytes(32).toString("hex");
-//   this.passwordResetToken = crypto
-//     .createHash("sha256")
-//     .update(resetToken)
-//     .digest("hex");
-//   console.log({ resetToken }, this.passwordResetToken);
-//   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-//   return resetToken;
-// };
-// declaration du model
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  console.log({ resetToken }, this.passwordResetToken);
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  return resetToken;
+};
+
+//declaration du model
 const User = mongoose.model("User", userSchema);
 module.exports = User;

@@ -1,3 +1,4 @@
+const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 
 const crypto = require("crypto");
@@ -112,23 +113,16 @@ exports.protect = async (req, res, next) => {
 };
 
 // eslint-disable-next-line arrow-body-style
-// exports.restrictTo = (...roles) => {
-//   return (req, res, next) => {
-//     //roles ["admin", "hair_salon_owner ", "beauty_salon_owner"].role = "user"
-//     if (!roles.includes(req.body.user)) {
-//       return res.status(403).json({
-//         status: "fail",
-//         message: "you do not have permission to do this action",
-//       });
-//     }
-//     next();
-//   };
-// };
-
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
-    // roles ['admin', "beauty_salon_owner"]. role = "user"
-    if(!roles.includes( ))
+    //roles ["admin", "hair_salon_owner ", "beauty_salon_owner"].role = "user"
+    if (!roles.includes(req.body.user)) {
+      return res.status(403).json({
+        status: "fail",
+        message: "you do not have permission to do this action",
+      });
+    }
+    next();
   };
 };
 
@@ -151,8 +145,7 @@ exports.forgotPassword = async (req, res, next) => {
   const message = `forgot your password? submit a PATCH request to your new password and passwordConfirm to : ${resetURL}.\nif you didn't forget your password, please ignore this email"`;
   try {
     await sendMail({
-      email: user.email,
-      to: "mardoxheeLuviki@gmail.com",
+      to: user.email,
       subject: "blablablbablla",
       html: message,
     });

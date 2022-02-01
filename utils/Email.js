@@ -6,8 +6,7 @@ const sendMail = async (options) => {
   // 1) Create a transporter to send email
   const transporter = nodemailer.createTransport(
     sendgridTransport({
-      apiKey:
-        "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",
+      apiKey: process.env.SENDGRID_API_KEY,
     })
   );
   // 2) Define the email options

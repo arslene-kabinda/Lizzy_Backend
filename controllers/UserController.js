@@ -1,5 +1,16 @@
 const User = require("../models/UserModel");
 const catchAsync = require("../utils/catchAsync");
+const cloudinary = require("../utils/services/cloudinary.config");
+const upload = require("../utils/services/ multer");
+
+exports.uploadImage = async (req, res) => {
+  try {
+    const result = await cloudinary.uploader.upload(req.file.path);
+    
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.find();

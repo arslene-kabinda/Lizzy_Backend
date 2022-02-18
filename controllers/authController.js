@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
 const User = require("../models/UserModel");
+const BeautySalon = require("../models/BeautySalon");
 const sendMail = require("../utils/Email");
 
 const signToken = (id) =>
@@ -30,7 +31,7 @@ exports.signup = async (req, res, next) => {
       html: "<p> You are registered as admin, you can create your haisalon and puiblish  your all activities </P>, <p> your next step is for you ceated your first haisalon </p>",
     })
       .then(() => {
-        console.log("Eamil sent ");
+        console.log("Email sent ");
       })
       .catch((error) => {
         console.log(error.response.body);
@@ -84,6 +85,7 @@ exports.protect = async (req, res, next) => {
   //1) verification token
   if (token) {
     jwt.verify(token, SECRET_KEY, (err, decoded) => {
+      console.log("arsy", decoded);
       if (err) {
         return res.status(401).json("token is not valid");
         // eslint-disable-next-line no-else-return
@@ -103,6 +105,7 @@ exports.protect = async (req, res, next) => {
             expiresIn: expiresIn,
           }
         );
+
         res.header("Authorization", `Bearer ${+newToken}`);
         next();
       }
@@ -112,16 +115,107 @@ exports.protect = async (req, res, next) => {
   }
 };
 
+// exports.protect = async (req, res, next) => {
+//   // 1) getting token and check it's there
+//   try {
+//     let token;
+//     if (
+//       req.headers.authorization &&
+//       req.headers.authorization.startsWith("Bearer")
+//     ) {
+//       token = req.headers.authorization.split(" ")[1];
+//     }
+//     console.log(token);
+
+//     if (!token) {
+//       return res.status(401).json({
+//         status: "fail",
+//         message: "you are not logged, please login",
+//       });
+//     }
+
+//     //1) verification token
+//     const decoded = await promisify(jwt.verify)(token, SECRET_KEY);
+//     console.log(decoded);
+//     // 2) check if user still exists
+//     const currentUser = await User.findById(decoded.id);
+//     if (!currentUser) {
+//       return res.status(401).json({
+//         status: "fail",
+//         message: "the user belonging that token dosen't exist",
+//       });
+//     }
+//     next();
+//     // 4) check if user changed password after the token  was issued
+//     if (currentUser.changedPasswordAfter(decoded.iat)) {
+//       return res.status(401).json({
+//         status: "fail",
+//         message: "user recently changed password ! please login  again",
+//       });
+//     }
+//     //
+//     req.user = currentUser;
+//     next();
+//   } catch (err) {
+//     res.status(400).json({
+//       status: "fail",
+//       message: err.message,
+//     });
+//   }
+
+//   //   if (token) {
+//   //     jwt.verify(token, SECRET_KEY, (err, decoded) => {
+//   //       if (err) {
+//   //         return res.status(401).json("token is not valid");
+//   //         // eslint-disable-next-line no-else-return
+//   //       } else {
+//   //         req.decoded = decoded;
+
+//   //         const expiresIn = 24 * 60 * 60;
+
+//   //         const newToken = jwt.sign(
+//   //           {
+//   //             user: decoded.user,
+//   //           },
+
+//   //           SECRET_KEY,
+
+//   //           {
+//   //             expiresIn: expiresIn,
+//   //           }
+//   //         );
+//   //         res.header("Authorization", `Bearer ${+newToken}`);
+//   //         next();
+//   //       }
+//   //     });
+//   //   } else {
+//   //     return res.status(401).json("token is required");
+//   //   }
+//   next();
+// };
+
 // eslint-disable-next-line arrow-body-style
-exports.restrictTo = (...roles) => {
-  return (req, res, next) => {
-    //roles ["admin", "hair_salon_owner ", "beauty_salon_owner"].role = "user"
-    if (!roles.includes(req.body.user)) {
-      return res.status(403).json({
-        status: "fail",
-        message: "you do not have permission to do this action",
-      });
-    }
+exports.restrictTo = (roles) => {
+  return async (req, res, next) => {
+    await User.findById(req.decoded.id).then(async (data) => {
+      if (!roles.includes(data.role)) {
+        return res.status(403).json({
+          status: "fail",
+          message: "you do not have permission to do this action",
+        });
+      }
+      if (data.role === "beauty_salon_owner") {
+        await BeautySalon.findById(req.params.id).then((salon) => {
+          if (salon.owner !== req.decoded.id) {
+            return res.status(403).json({
+              status: "fail",
+              message:
+                "you do not have permission to do this action because you are not a owner of this salon",
+            });
+          }
+        });
+      }
+    });
     next();
   };
 };

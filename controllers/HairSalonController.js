@@ -11,8 +11,10 @@ exports.aliasTopHairSalons = (req, res, next) => {
 
 exports.createHairSalon = async (req, res) => {
   try {
-    const Body = req.body;
-    const newHairSalon = await HairSalon.create(Body);
+    const bodies = req.body;
+    bodies.owner = req.decoded.id;
+    console.log("ars", req.decoded.id);
+    const newHairSalon = await HairSalon.create(bodies);
     res.status(201).json({
       status: "the creation of the hairsalon is done with success",
       data: {
@@ -22,14 +24,17 @@ exports.createHairSalon = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: "fail",
-      message: err,
+      message: err.message,
     });
   }
 };
 
 exports.getAllHairSalon = async (req, res) => {
   try {
-    const features = new APIFeatures(HairSalon.find(), req.query)
+    const features = new APIFeatures(
+      HairSalon.find().populate("owner"),
+      req.query
+    )
       .filter()
       .sort()
       .limitFields()
@@ -54,7 +59,7 @@ exports.getAllHairSalon = async (req, res) => {
 
 exports.getHairSalon = async (req, res) => {
   try {
-    const hairSalon = await HairSalon.findById(req.params.id);
+    const hairSalon = await HairSalon.findById(req.params.id).populate("owner");
     res.status(200).json({
       status: "success",
       data: {

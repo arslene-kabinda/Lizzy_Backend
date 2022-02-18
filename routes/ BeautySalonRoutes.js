@@ -2,22 +2,36 @@ const express = require("express");
 
 const router = express.Router();
 
-const authController = require("../controllers/authController");
+const { protect, restrictTo } = require("../controllers/authController");
 
-const beautySalonController = require("../controllers/BeautySalonControllers");
+const {
+  getAllBeautySalon,
+  createBeautySalon,
+  getBeautySalon,
+  deleteBeautySalon,
+  updateBeautySalon,
+} = require("../controllers/BeautySalonControllers");
 
 router
   .route("/")
-  .get(authController.protect, beautySalonController.getAllBeautySalon)
-  .post(beautySalonController.createBeautySalon);
+  .get(protect, getAllBeautySalon)
+  .post(
+    protect,
+    restrictTo(["admin", "beauty_salon_owner"]),
+    createBeautySalon
+  );
 router
   .route("/:id")
-  .get(beautySalonController.getBeautySalon)
-  .patch(beautySalonController.updateBeautySalon)
+  .get(protect, getBeautySalon)
+  .patch(
+    protect,
+    restrictTo(["admin", "beauty_salon_owner"]),
+    updateBeautySalon
+  )
   .delete(
-    authController.protect,
-    authController.restrictTo("admin", "beauty_salon_owner"),
-    beautySalonController.deleteBeautySalon
+    protect,
+    restrictTo(["admin", "beauty_salon_owner"]),
+    deleteBeautySalon
   );
 
 module.exports = router;

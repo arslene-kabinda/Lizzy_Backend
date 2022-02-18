@@ -59,10 +59,12 @@ const userSchema = new mongoose.Schema({
   cloudinary_id: {
     type: String,
   },
+
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
-  // restaurant: { type: mongoose.Schema.Types.ObjectId, ref: "Restaurant" },
+  beautySalon: { type: mongoose.Schema.Types.ObjectId, ref: "BeautySalon" },
+  hairSalon: { type: mongoose.Schema.Types.ObjectId, ref: "HairSalon" },
 });
 userSchema.pre("save", async function (next) {
   // will be runned if password was actually modified
@@ -83,15 +85,16 @@ userSchema.methods.correctPassword = async function (
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
-userSchema.methods.chagedPasswordAfter = function (JWTTimestamp) {
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
-      30
+      10
     );
     console.log(changedTimestamp, JWTTimestamp);
     return JWTTimestamp < changedTimestamp;
   }
+  //false means not changed
   return false;
 };
 userSchema.methods.createPasswordResetToken = function () {

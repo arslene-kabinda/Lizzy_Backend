@@ -3,8 +3,12 @@ const APIFeatures = require("../utils/apiFeatures");
 
 exports.createBeautySalon = async (req, res) => {
   try {
-    const Body = req.body;
-    const newBeautySalon = await BeautySalon.create(Body);
+    console.log("decoded:", req.decoded.id);
+    const bodies = req.body;
+    bodies.owner = req.decoded.id;
+
+    const newBeautySalon = await BeautySalon.create(bodies);
+
     res.status(201).json({
       status: "the creation of the hairsalon is done with success",
       data: {
@@ -14,14 +18,17 @@ exports.createBeautySalon = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: "fail",
-      message: err,
+      message: err.message,
     });
   }
 };
 
 exports.getAllBeautySalon = async (req, res) => {
   try {
-    const features = new APIFeatures(BeautySalon.find(), req.query)
+    const features = new APIFeatures(
+      BeautySalon.find().populate("owner"),
+      req.query
+    )
       .filter()
       .sort()
       .limitFields()
@@ -46,7 +53,10 @@ exports.getAllBeautySalon = async (req, res) => {
 
 exports.getBeautySalon = async (req, res) => {
   try {
-    const beautySalon = await BeautySalon.findById(req.params.id);
+    const beautySalon = await BeautySalon.findById(req.params.id).populate(
+      "owner"
+    );
+
     res.status(200).json({
       status: "success",
       data: {
@@ -56,7 +66,7 @@ exports.getBeautySalon = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: "failed",
-      message: err,
+      message: err.message,
     });
   }
 };

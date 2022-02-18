@@ -47,6 +47,11 @@ const hairSalonSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  booking: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
 });
 
 const HairSalon = mongoose.model("HairSalon", hairSalonSchema);

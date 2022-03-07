@@ -1,13 +1,14 @@
-const Booking = require("./../models/BookingModel");
-
-const APIFeatures = require("./../utils/apiFeatures");
-
 const moment = require("moment");
 
-const sendMail = require("../utils/Emails");
+const Booking = require("../models/BookingModel");
+
+const APIFeatures = require("../utils/apiFeatures");
+
+const sendMail = require("../utils/Email");
 
 exports.createBooking = async (req, res) => {
   try {
+    // eslint-disable-next-line prefer-const
     let currentDate = moment();
     console.log(currentDate.toString());
     const bookingDate = req.body.date;

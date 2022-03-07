@@ -9,7 +9,7 @@ const swaggerUi = require("swagger-ui-express");
 const hairSalonRouter = require("./routes/HairSalonRoutes");
 const beautySalonRouter = require("./routes/ BeautySalonRoutes");
 const userRouter = require("./routes/UserRoutes");
-const bookingRouter = require("./")
+const bookingRouter = require("./routes/BookingRoutes");
 
 // middleware
 console.log(process.env.NODE_ENV);
@@ -64,5 +64,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use("/api/hairSalons", hairSalonRouter);
 app.use("/api/beautySalons", beautySalonRouter);
 app.use("/api/users", userRouter);
+app.use("/api/booking", bookingRouter);
 
 module.exports = app;

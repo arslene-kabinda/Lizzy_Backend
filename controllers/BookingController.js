@@ -1,6 +1,6 @@
 const Booking = require("./../models/BookingModel");
 
-const apiFeatures = require("./../utils/apiFeatures");
+const APIFeatures = require("./../utils/apiFeatures");
 
 const moment = require("moment");
 
@@ -43,6 +43,48 @@ exports.createBooking = async (req, res) => {
       status: "failed",
       code: err.code,
       message: err.code,
+    });
+  }
+};
+
+exports.getAllBooking = async (req, res) => {
+  try {
+    const features = new APIFeatures(Booking.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    const booking = await features.query;
+
+    res.status(200).json({
+      status: "success",
+      numberOfHairSalon: Booking.length,
+      data: {
+        booking,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};
+exports.getBookingByUser = async (req, res) => {
+  try {
+    const booking = await Booking.find({
+      user: req.decoded.id,
+    }).populate("user");
+    res.status(200).json({
+      status: "success",
+      data: {
+        booking,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err.message,
     });
   }
 };

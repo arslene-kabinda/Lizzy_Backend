@@ -1,15 +1,19 @@
 const express = require("express");
 
 const app = express();
+const cors = require("cors");
+
 const morgan = require("morgan");
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const hairSalonRouter = require("./routes/HairSalonRoutes");
 const beautySalonRouter = require("./routes/ BeautySalonRoutes");
 const userRouter = require("./routes/UserRoutes");
+const bookingRouter = require("./")
 
 // middleware
 console.log(process.env.NODE_ENV);
+app.use(cors());
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));

@@ -34,7 +34,7 @@ exports.getAllServices = async (req, res) => {
       numberOfServices: services.length,
       services,
     });
-    console.log("arsy", services);
+  
   } catch (err) {
     res.status(400).json({
       status: "failed",

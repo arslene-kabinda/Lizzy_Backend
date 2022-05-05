@@ -22,7 +22,7 @@ router
   );
 router
   .route("/:id")
-  .get(protect, getBeautySalon)
+  .get(getBeautySalon)
   .patch(
     protect,
     restrictTo(["admin", "beauty_salon_owner"]),

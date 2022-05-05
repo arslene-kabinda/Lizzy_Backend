@@ -9,15 +9,15 @@ const bcrypt = require("bcryptjs");
 const userSchema = new mongoose.Schema({
   lastName: {
     type: String,
-    required: [true, "an account must have a lastName"],
+    // required: [true, "an account must have a lastName"],
   },
   firstName: {
     type: String,
-    required: [true, "an account must have a firstName"],
+    // required: [true, "an account must have a firstName"],
   },
   email: {
     type: String,
-    required: [true, "please provide your email "],
+    // required: [true, "please provide your email "],
     unique: true,
     lowercase: true,
     validate: [validator.isEmail, "please provide a valid mail"],
@@ -35,14 +35,14 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "an account must have a password"],
+    // required: [true, "an account must have a password"],
     minlength: [8, "a minimum of 10 characters"],
     select: false,
   },
 
   passwordConfirm: {
     type: String,
-    required: [true, "please confirm "],
+    // required: [true, "please confirm "],
     select: false,
     validate: {
       //this only work on create and  save

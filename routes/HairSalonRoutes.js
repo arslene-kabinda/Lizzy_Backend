@@ -13,11 +13,11 @@ const { protect, restrictTo } = require("../controllers/authController");
 
 router
   .route("/")
-  .get(protect, getAllHairSalon)
+  .get(getAllHairSalon)
   .post(protect, restrictTo(["admin", "hair_salon_owner"]), createHairSalon);
 router
   .route("/:id")
-  .get(protect, getHairSalon)
+  .get(getHairSalon)
   .patch(protect, restrictTo(["admin", "hair_salon_owner"]), updateHairSalon)
   .delete(protect, restrictTo(["admin", "hair_salon_owner"]), deleteHairSalon);
 

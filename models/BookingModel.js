@@ -16,6 +16,12 @@ const bookingSchema = new mongoose.Schema({
     ref: "User",
     required: [true, "Booking must belong to a User! "],
   },
+  service: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Service",
+    },
+  ],
   date: {
     type: Date,
     default: Date.now(),

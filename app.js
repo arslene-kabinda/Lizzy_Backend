@@ -2,6 +2,7 @@ const express = require("express");
 
 const app = express();
 const cors = require("cors");
+const helmet = require("helmet");
 
 const morgan = require("morgan");
 const swaggerJsDoc = require("swagger-jsdoc");
@@ -10,17 +11,33 @@ const hairSalonRouter = require("./routes/HairSalonRoutes");
 const beautySalonRouter = require("./routes/ BeautySalonRoutes");
 const userRouter = require("./routes/UserRoutes");
 const bookingRouter = require("./routes/BookingRoutes");
+const townshipRouter = require("./routes/TownshipRoutes");
+const serviceRouter = require("./routes/ServiceRoutes");
+
+console.log(process.env.NODE_ENV);
 
 // middleware
-console.log(process.env.NODE_ENV);
+// Implement CORS
+
 app.use(cors());
+
+app.options("*", cors());
+
+app.use(express.json());
+
+// serving static files
+app.use(express.static(`${__dirname}/public`));
+
+// set security http headers
+
+app.use(helmet());
+
+// developpement logging
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-app.use(express.json());
-app.use(express.static(`${__dirname}/public`));
 app.use((req, res, next) => {
   console.log("hello from the middleWare");
   next();
@@ -61,9 +78,15 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
  *        '200':
  *          description : successfull !
  */
-app.use("/api/hairSalons", hairSalonRouter);
-app.use("/api/beautySalons", beautySalonRouter);
-app.use("/api/users", userRouter);
-app.use("/api/booking", bookingRouter);
+const corsOptions = {
+  origin: "http://localhost:3002",
+  optionsSuccessStatus: 200,
+};
+app.use("/api/hairSalons", cors(corsOptions), hairSalonRouter);
+app.use("/api/beautySalons", beautySalonRouter, cors(corsOptions));
+app.use("/api/users", userRouter, cors(corsOptions));
+app.use("/api/booking", bookingRouter, cors(corsOptions));
+app.use("/api/township", townshipRouter, cors(corsOptions));
+app.use("/api/service", serviceRouter, cors(corsOptions));
 
 module.exports = app;

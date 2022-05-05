@@ -26,7 +26,7 @@ exports.createBeautySalon = async (req, res) => {
 exports.getAllBeautySalon = async (req, res) => {
   try {
     const features = new APIFeatures(
-      BeautySalon.find().populate("owner"),
+      BeautySalon.find().populate("owner").populate("township"),
       req.query
     )
       .filter()
@@ -53,9 +53,9 @@ exports.getAllBeautySalon = async (req, res) => {
 
 exports.getBeautySalon = async (req, res) => {
   try {
-    const beautySalon = await BeautySalon.findById(req.params.id).populate(
-      "owner"
-    );
+    const beautySalon = await BeautySalon.findById(req.params.id)
+      .populate("owner")
+      .populate("township");
 
     res.status(200).json({
       status: "success",

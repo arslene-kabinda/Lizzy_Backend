@@ -17,7 +17,6 @@ const hairSalonSchema = new mongoose.Schema({
   adress: {
     type: [
       {
-        township: { type: String },
         quater: { type: String },
         street: { type: String },
         number: { type: Number },
@@ -52,6 +51,7 @@ const hairSalonSchema = new mongoose.Schema({
     ref: "User",
   },
   booking: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
+  township: { type: mongoose.Schema.Types.ObjectId, ref: "Township" },
 });
 
 const HairSalon = mongoose.model("HairSalon", hairSalonSchema);

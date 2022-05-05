@@ -5,6 +5,7 @@ const Booking = require("../models/BookingModel");
 const APIFeatures = require("../utils/apiFeatures");
 
 const sendMail = require("../utils/Email");
+const sendSms = require("../utils/Sms");
 
 exports.createBooking = async (req, res) => {
   try {
@@ -14,7 +15,7 @@ exports.createBooking = async (req, res) => {
     const bookingDate = req.body.date;
     if (moment(bookingDate).isBefore(currentDate)) {
       res.status(400).json({
-        status: "bade date ",
+        status: "wrong date",
       });
     } else {
       const bodies = req.body;
@@ -38,6 +39,10 @@ exports.createBooking = async (req, res) => {
         .catch((error) => {
           console.error(error.response.body);
         });
+      await sendSms({
+        to: newBooking.user.phoneNumber,
+        body: `Thank you for using Lizzy!  you have chosen your appointment for the date ${newBooking.data}   `,
+      });
     }
   } catch (err) {
     res.status(400).json({
@@ -55,13 +60,13 @@ exports.getAllBooking = async (req, res) => {
       .sort()
       .limitFields()
       .paginate();
-    const booking = await features.query;
+    const bookings = await features.query;
 
     res.status(200).json({
       status: "success",
       numberOfHairSalon: Booking.length,
       data: {
-        booking,
+        bookings,
       },
     });
   } catch (err) {
@@ -85,6 +90,62 @@ exports.getBookingByUser = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: "failed",
+      message: err.message,
+    });
+  }
+};
+
+exports.getOneBooking = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id).populate([
+      "hairSalon",
+      "beautySalon",
+      "service",
+    ]);
+    res.status(200).json({
+      status: "success",
+      data: {
+        booking,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};
+
+exports.updateBooking = async (req, res) => {
+  try {
+    const booking = await Booking.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).json({
+      statusstatus: "success",
+      data: {
+        booking,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};
+
+exports.deleteBooking = async (req, res) => {
+  try {
+    await Booking.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      status: "Booking deleted successfully",
+      data: null,
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: "not found",
       message: err.message,
     });
   }

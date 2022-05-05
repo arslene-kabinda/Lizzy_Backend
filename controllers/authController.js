@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 

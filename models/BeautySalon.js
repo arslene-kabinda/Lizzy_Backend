@@ -51,7 +51,8 @@ const beautySalonSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  booking: { type: mongoose.Schema.Types.ObjectId, ref: "Booking" },
+  booking: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
+  township: [{ type: mongoose.Schema.Types.ObjectId, ref: "Township" }],
 });
 
 const BeautySalon = mongoose.model("BeautySalon", beautySalonSchema);

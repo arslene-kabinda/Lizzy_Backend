@@ -32,7 +32,7 @@ exports.createHairSalon = async (req, res) => {
 exports.getAllHairSalon = async (req, res) => {
   try {
     const features = new APIFeatures(
-      HairSalon.find().populate("owner"),
+      HairSalon.find().populate("owner").populate("township"),
       req.query
     )
       .filter()
@@ -45,9 +45,8 @@ exports.getAllHairSalon = async (req, res) => {
     res.status(200).json({
       status: "success",
       results: hairSalons.length,
-      data: {
-        hairSalons,
-      },
+
+      hairSalons,
     });
   } catch (err) {
     res.status(400).json({
@@ -59,12 +58,13 @@ exports.getAllHairSalon = async (req, res) => {
 
 exports.getHairSalon = async (req, res) => {
   try {
-    const hairSalon = await HairSalon.findById(req.params.id).populate("owner");
+    const hairSalon = await HairSalon.findById(req.params.id)
+      .populate("owner")
+      .populate("township");
     res.status(200).json({
       status: "success",
-      data: {
-        hairSalon,
-      },
+
+      hairSalon,
     });
   } catch (err) {
     res.status(400).json({
